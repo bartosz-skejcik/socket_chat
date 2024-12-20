@@ -20,9 +20,9 @@ windows:
   git_branch: ""
   panes:
   - directory: ""
-    initial_command: cargo run --bin server
+    initial_command: cargo watch -c -w src -x "run --bin server"
   - directory: ""
-    initial_command: cargo run --bin client
+    initial_command: cargo watch -c -w src -x "run --bin client"
 - name: git
   directory: ""
   initial_command: ""
