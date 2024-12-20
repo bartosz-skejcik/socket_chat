@@ -1,13 +1,22 @@
-use std::time::SystemTime;
+pub mod events;
 
-#[derive(Debug)]
+use anyhow::Error;
+use serde::{Deserialize, Serialize};
+use std::io::Write;
+use std::{
+    net::TcpStream,
+    sync::{Arc, Mutex},
+    time::SystemTime,
+};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Message {
     pub content: String,
     pub datetime: SystemTime,
     pub client: Client,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Client {
     pub is_server: bool,
     pub addr: String,
@@ -17,6 +26,7 @@ pub struct Client {
 #[derive(Debug)]
 pub struct Server {
     pub messages: Vec<Message>,
+    pub connections: Vec<Arc<Mutex<TcpStream>>>,
 }
 
 impl Server {
@@ -47,6 +57,20 @@ impl Server {
         println!("{}: {}", message.client.name, message.content);
 
         self.messages.push(message);
+    }
+
+    pub fn broadcast(&mut self, message: &str) -> Result<(), Error> {
+        for connection in &self.connections {
+            let mut stream = connection.lock().unwrap();
+            stream.write_all(message.as_bytes())?;
+            stream.flush()?;
+        }
+
+        Ok(())
+    }
+
+    pub fn add_connection(&mut self, stream: TcpStream) {
+        self.connections.push(Arc::new(Mutex::new(stream)));
     }
 }
 
