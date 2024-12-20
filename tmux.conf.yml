@@ -1,0 +1,33 @@
+session_name: socket_chat
+focus_window: 1
+defaults:
+  directory: ""
+  initial_command: ""
+dependencies: []
+windows:
+- name: editor
+  directory: ""
+  initial_command: ""
+  layout: null
+  git_branch: ""
+  panes:
+  - directory: ""
+    initial_command: nvim .
+- name: rust
+  directory: ""
+  initial_command: ""
+  layout: even-horizontal
+  git_branch: ""
+  panes:
+  - directory: ""
+    initial_command: cargo run --bin server
+  - directory: ""
+    initial_command: cargo run --bin client
+- name: git
+  directory: ""
+  initial_command: ""
+  layout: null
+  git_branch: ""
+  panes:
+    - directory: ""
+      initial_command: git status
